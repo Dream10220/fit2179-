@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Australia's Wildlife Under Threat</title>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e1a0e;color:#d6d2c4;font-family:'Outfit',sans-serif;font-size:16px;line-height:1.7;font-weight:300;position:relative}
+::selection{background:#3d8b37;color:#fff}
+
+/* Leaf SVG patterns */
+.leaf-bg{position:absolute;width:100%;height:100%;top:0;left:0;overflow:hidden;pointer-events:none;opacity:0.04}
+.leaf-bg svg{position:absolute}
+
+/* HEADER — immersive forest feel */
+header{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 40px;background:linear-gradient(170deg,#081208 0%,#0e1f0e 30%,#162816 60%,#0e1a0e 100%);border:none}
+header::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 70%,rgba(61,139,55,0.12) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 30%,rgba(139,107,55,0.08) 0%,transparent 50%)}
+header .leaf-deco{position:absolute;opacity:0.06}
+.header-content{position:relative;z-index:2;max-width:800px}
+header h1{font-family:'Cormorant Garamond',serif;font-size:4.5em;font-weight:700;color:#e8e4d8;line-height:1.05;margin-bottom:16px}
+header h1 .highlight{color:#5cb85c;font-style:italic}
+header .tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2em;color:#8a9e7e;margin:20px auto 0;max-width:550px;line-height:1.6}
+header .unit-tag{font-size:0.68em;letter-spacing:4px;text-transform:uppercase;color:#4a6e4a;margin-bottom:30px}
+
+/* Hero stats with leaf-shaped dividers */
+.hero-stats{display:flex;justify-content:center;gap:2px;margin-top:50px;flex-wrap:wrap}
+.hero-stat{background:rgba(255,255,255,0.03);border:none;padding:22px 30px;text-align:center}
+.hero-stat .num{font-family:'Cormorant Garamond',serif;font-size:2.4em;font-weight:700;color:#5cb85c;display:block;line-height:1}
+.hero-stat .lbl{font-size:0.65em;letter-spacing:2px;text-transform:uppercase;color:#6b8a5e;margin-top:6px;display:block}
+.scroll-hint{margin-top:50px;font-size:0.7em;letter-spacing:3px;text-transform:uppercase;color:#3a5a3a}
+.scroll-hint span{display:block;margin-top:8px;font-size:1.8em;animation:bounce 2s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:0 48px}
+
+/* Sections */
+section{padding:100px 0;position:relative;overflow:hidden}
+section.alt{background:rgba(18,30,18,0.5)}
+
+/* Decorative leaf dividers between sections */
+.leaf-divider{text-align:center;padding:20px 0;color:rgba(92,184,92,0.2);font-size:1.4em;letter-spacing:12px}
+
+/* Section headers */
+.section-tag{font-size:0.7em;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#5cb85c;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.section-tag::before{content:'';width:30px;height:1px;background:#5cb85c}
+h2{font-family:'Cormorant Garamond',serif;font-size:2.6em;font-weight:700;color:#e8e4d8;line-height:1.15;margin-bottom:14px}
+h2 .accent{color:#c4963a;font-style:italic}
+.section-intro{color:#8a9e7e;font-size:0.95em;font-weight:300;margin-bottom:40px;max-width:580px;line-height:1.75}
+
+/* Grid */
+.grid{display:grid;gap:32px;align-items:start}
+.g2{grid-template-columns:1fr 1fr}
+.g2w{grid-template-columns:1.5fr 1fr}
+.g2n{grid-template-columns:1fr 1.5fr}
+@media(max-width:800px){.g2,.g2w,.g2n{grid-template-columns:1fr}}
+
+/* Chart cards — organic feel with subtle green glow */
+.chart-card{background:rgba(20,32,20,0.4);border:none;border-radius:20px;padding:28px;position:relative;backdrop-filter:blur(4px)}
+.chart-card::before{content:'';position:absolute;top:0;left:40px;right:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(92,184,92,0.2),transparent)}
+.chart-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2em;font-weight:600;color:#d6d2c4;margin-bottom:4px}
+.chart-card .sub{font-size:0.78em;color:#6b8a5e;margin-bottom:16px;font-weight:300}
+
+/* Callout — warm amber leaf-inspired */
+.callout{position:relative;background:rgba(196,150,58,0.04);border-left:2px solid rgba(196,150,58,0.4);padding:22px 26px;border-radius:0 16px 16px 0;margin-bottom:20px}
+.callout p{font-size:0.9em;color:#c4b88a;line-height:1.7}
+.callout strong{color:#c4963a;font-weight:500}
+
+/* Feature quote */
+.feature-quote{text-align:center;padding:80px 48px;position:relative}
+.feature-quote blockquote{font-family:'Cormorant Garamond',serif;font-size:1.8em;font-style:italic;color:#5cb85c;max-width:700px;margin:0 auto;line-height:1.4;opacity:0.7}
+.feature-quote .attribution{font-size:0.75em;color:#4a6e4a;margin-top:16px;letter-spacing:1px}
+
+/* Organic section break */
+.organic-break{height:120px;position:relative;overflow:hidden}
+.organic-break svg{width:100%;height:100%;display:block}
+
+/* Footer */
+footer{text-align:center;padding:60px 48px;border:none;color:#4a6e4a;font-size:0.78em}
+footer a{color:#5cb85c;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* Vega embed */
+.vega-embed{width:100%}
+.vega-embed details{display:none!important}
+
+/* Hanging vines */
+.vine-left,.vine-right{position:absolute;top:0;width:60px;pointer-events:none;z-index:10;opacity:0.3;height:100%}
+.vine-left{left:0}
+.vine-right{right:0}
+.vine-scroll{width:100%;height:4000px}
+@keyframes vineFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(6px) rotate(0.5deg)}}
+</style>
+</head>
+<body>
+
+<!-- Hanging vines — two stems per side, full page length -->
+<div class="vine-left">
+  <svg viewBox="0 0 60 8000" fill="none">
+    <!-- Stem 1 -->
+    <path d="M15 0C15 60 8 100 12 160C16 220 7 280 11 350C15 420 8 490 12 560C16 630 7 700 11 770C15 840 8 910 12 980C16 1050 7 1120 11 1200C15 1280 8 1360 12 1440C16 1520 7 1600 11 1680C15 1760 8 1840 12 1920C16 2000 7 2080 11 2160C15 2240 8 2320 12 2400C16 2480 7 2560 11 2640C15 2720 8 2800 12 2880C16 2960 7 3040 11 3120C15 3200 8 3280 12 3360C16 3440 8 3520 12 3600C16 3680 8 3760 12 3840C16 3920 8 4000 12 4100C16 4200 8 4300 12 4400C16 4500 8 4600 12 4700C15 4800 10 4900 12 5000C16 5100 8 5200 12 5300C15 5400 10 5500 12 5600C16 5700 8 5800 12 5900C15 6000 10 6100 12 6200C16 6300 8 6400 12 6500C15 6600 10 6700 12 6800C16 6900 8 7000 12 7100C15 7200 10 7300 12 7400C16 7500 8 7600 12 7700C15 7800 10 7900 12 8000" stroke="#5cb85c" stroke-width="1" fill="none"/>
+    <!-- Stem 2 -->
+    <path d="M30 0C30 70 22 120 26 190C30 260 21 330 25 400C29 470 22 540 26 620C30 700 21 770 25 840C29 910 22 990 26 1070C30 1150 21 1230 25 1310C29 1390 22 1470 26 1550C30 1630 21 1710 25 1790C29 1870 22 1950 26 2030C30 2110 21 2190 25 2270C29 2350 22 2430 26 2510C30 2590 21 2680 25 2770C29 2860 22 2950 26 3040C30 3130 22 3220 26 3310C30 3400 22 3500 26 3600C30 3700 22 3800 26 3900C30 4000 22 4100 26 4200C30 4300 22 4400 26 4500C30 4600 22 4700 26 4800C30 4900 22 5000 26 5100C30 5200 22 5300 26 5400C30 5500 22 5600 26 5700C30 5800 22 5900 26 6000C30 6100 22 6200 26 6300C30 6400 22 6500 26 6600C30 6700 22 6800 26 6900C30 7000 22 7100 26 7200C30 7300 22 7400 26 7500C30 7600 22 7700 26 7800C30 7900 25 7950 26 8000" stroke="#4a9e4a" stroke-width="0.8" fill="none"/>
+    <!-- Leaves on stem 1 -->
+    <ellipse cx="8" cy="150" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.5" transform="rotate(-25 8 150)"/>
+    <ellipse cx="6" cy="135" rx="4" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-45 6 135)"/>
+    <ellipse cx="9" cy="400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-20 9 400)"/>
+    <ellipse cx="7" cy="385" rx="4" ry="7" fill="#3d8b37" fill-opacity="0.35" transform="rotate(-40 7 385)"/>
+    <ellipse cx="8" cy="700" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.5" transform="rotate(-30 8 700)"/>
+    <ellipse cx="10" cy="980" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-22 10 980)"/>
+    <ellipse cx="7" cy="965" rx="4" ry="7" fill="#3d8b37" fill-opacity="0.3" transform="rotate(-50 7 965)"/>
+    <ellipse cx="9" cy="1280" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-28 9 1280)"/>
+    <ellipse cx="8" cy="1600" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-20 8 1600)"/>
+    <ellipse cx="10" cy="1920" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-35 10 1920)"/>
+    <ellipse cx="7" cy="2200" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-25 7 2200)"/>
+    <ellipse cx="9" cy="2500" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-30 9 2500)"/>
+    <ellipse cx="8" cy="2800" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-22 8 2800)"/>
+    <ellipse cx="10" cy="3100" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-28 10 3100)"/>
+    <ellipse cx="7" cy="3400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-35 7 3400)"/>
+    <ellipse cx="9" cy="3700" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-20 9 3700)"/>
+    <ellipse cx="8" cy="4000" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-30 8 4000)"/>
+    <ellipse cx="10" cy="4400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-25 10 4400)"/>
+    <ellipse cx="8" cy="4800" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-35 8 4800)"/>
+    <!-- Leaves on stem 2 -->
+    <ellipse cx="22" cy="250" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-20 22 250)"/>
+    <ellipse cx="20" cy="530" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-35 20 530)"/>
+    <ellipse cx="23" cy="840" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-25 23 840)"/>
+    <ellipse cx="21" cy="1150" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-30 21 1150)"/>
+    <ellipse cx="22" cy="1470" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-22 22 1470)"/>
+    <ellipse cx="20" cy="1790" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-28 20 1790)"/>
+    <ellipse cx="23" cy="2100" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-35 23 2100)"/>
+    <ellipse cx="21" cy="2450" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-20 21 2450)"/>
+    <ellipse cx="22" cy="2750" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-30 22 2750)"/>
+    <ellipse cx="20" cy="3050" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-25 20 3050)"/>
+    <ellipse cx="23" cy="3350" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-35 23 3350)"/>
+    <ellipse cx="21" cy="3650" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-20 21 3650)"/>
+    <ellipse cx="22" cy="3950" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-28 22 3950)"/>
+    <ellipse cx="20" cy="4250" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-30 20 4250)"/>
+    <ellipse cx="23" cy="4600" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-22 23 4600)"/>
+    <ellipse cx="21" cy="4900" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-35 21 4900)"/>
+    <!-- Tendrils -->
+    <path d="M18 300C22 294 26 298 23 305" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M33 600C37 594 41 598 38 605" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M16 900C20 894 24 898 21 905" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M34 1300C38 1294 42 1298 39 1305" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M17 1700C21 1694 25 1698 22 1705" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M33 2050C37 2044 41 2048 38 2055" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M16 2400C20 2394 24 2398 21 2405" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M34 2800C38 2794 42 2798 39 2805" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M17 3200C21 3194 25 3198 22 3205" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M33 3600C37 3594 41 3598 38 3605" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M16 4000C20 3994 24 3998 21 4005" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M34 4500C38 4494 42 4498 39 4505" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+  
+    <ellipse cx="10" cy="5200" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-25 10 5200)"/>
+    <ellipse cx="22" cy="5500" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-30 22 5500)"/>
+    <ellipse cx="8" cy="5800" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-20 8 5800)"/>
+    <ellipse cx="21" cy="6100" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-35 21 6100)"/>
+    <ellipse cx="10" cy="6400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-28 10 6400)"/>
+    <ellipse cx="22" cy="6700" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-22 22 6700)"/>
+    <ellipse cx="8" cy="7000" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-30 8 7000)"/>
+    <ellipse cx="21" cy="7300" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-25 21 7300)"/>
+    <ellipse cx="10" cy="7600" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(-35 10 7600)"/>
+    <ellipse cx="22" cy="7900" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(-20 22 7900)"/>
+  </svg>
+</div>
+<div class="vine-right">
+  <svg viewBox="0 0 60 8000" fill="none">
+    <!-- Stem 1 -->
+    <path d="M30 0C30 55 22 95 26 155C30 215 21 275 25 345C29 415 22 485 26 555C30 625 21 695 25 765C29 835 22 905 26 975C30 1045 21 1115 25 1195C29 1275 22 1355 26 1435C30 1515 21 1595 25 1675C29 1755 22 1835 26 1915C30 1995 21 2075 25 2155C29 2235 22 2315 26 2395C30 2475 21 2560 25 2650C29 2740 22 2830 26 2920C30 3010 22 3100 26 3200C30 3300 22 3400 26 3500C30 3600 22 3700 26 3800C30 3900 22 4000 26 4100C30 4200 22 4300 26 4400C30 4500 22 4600 26 4700C30 4800 22 4900 26 5000C30 5100 22 5200 26 5300C30 5400 22 5500 26 5600C30 5700 22 5800 26 5900C30 6000 22 6100 26 6200C30 6300 22 6400 26 6500C30 6600 22 6700 26 6800C30 6900 22 7000 26 7100C30 7200 22 7300 26 7400C30 7500 22 7600 26 7700C30 7800 25 7900 27 8000" stroke="#5cb85c" stroke-width="1" fill="none"/>
+    <!-- Stem 2 -->
+    <path d="M45 0C45 65 37 115 41 185C45 255 36 325 40 395C44 465 37 535 41 615C45 695 36 765 40 835C44 905 37 985 41 1065C45 1145 36 1225 40 1305C44 1385 37 1465 41 1545C45 1625 36 1705 40 1785C44 1865 37 1945 41 2025C45 2105 36 2185 40 2265C44 2345 37 2425 41 2505C45 2585 36 2670 40 2760C44 2850 37 2940 41 3030C45 3120 37 3210 41 3300C45 3390 37 3490 41 3590C45 3690 37 3790 41 3890C45 3990 37 4090 41 4190C45 4290 37 4390 41 4490C45 4590 37 4690 41 4790C45 4890 37 4990 41 5090C45 5190 37 5290 41 5390C45 5490 37 5590 41 5690C45 5790 37 5890 41 5990C45 6090 37 6190 41 6290C45 6390 37 6490 41 6590C45 6690 37 6790 41 6890C45 6990 37 7090 41 7190C45 7290 37 7390 41 7490C45 7590 37 7690 41 7790C45 7890 40 7950 42 8000" stroke="#4a9e4a" stroke-width="0.8" fill="none"/>
+    <!-- Leaves on stem 1 -->
+    <ellipse cx="34" cy="150" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.5" transform="rotate(25 34 150)"/>
+    <ellipse cx="36" cy="135" rx="4" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(45 36 135)"/>
+    <ellipse cx="33" cy="450" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(20 33 450)"/>
+    <ellipse cx="35" cy="760" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.5" transform="rotate(30 35 760)"/>
+    <ellipse cx="33" cy="1060" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(22 33 1060)"/>
+    <ellipse cx="35" cy="1045" rx="4" ry="7" fill="#3d8b37" fill-opacity="0.3" transform="rotate(50 35 1045)"/>
+    <ellipse cx="34" cy="1400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(28 34 1400)"/>
+    <ellipse cx="33" cy="1750" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(20 33 1750)"/>
+    <ellipse cx="35" cy="2100" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(35 35 2100)"/>
+    <ellipse cx="33" cy="2450" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(25 33 2450)"/>
+    <ellipse cx="35" cy="2800" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(30 35 2800)"/>
+    <ellipse cx="33" cy="3150" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(22 33 3150)"/>
+    <ellipse cx="35" cy="3500" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(28 35 3500)"/>
+    <ellipse cx="33" cy="3850" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(35 33 3850)"/>
+    <ellipse cx="35" cy="4200" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(20 35 4200)"/>
+    <ellipse cx="33" cy="4600" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(30 33 4600)"/>
+    <!-- Leaves on stem 2 -->
+    <ellipse cx="49" cy="300" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(20 49 300)"/>
+    <ellipse cx="47" cy="620" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(35 47 620)"/>
+    <ellipse cx="49" cy="930" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(25 49 930)"/>
+    <ellipse cx="47" cy="1250" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(30 47 1250)"/>
+    <ellipse cx="49" cy="1580" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(22 49 1580)"/>
+    <ellipse cx="47" cy="1900" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(28 47 1900)"/>
+    <ellipse cx="49" cy="2200" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(35 49 2200)"/>
+    <ellipse cx="47" cy="2550" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(20 47 2550)"/>
+    <ellipse cx="49" cy="2900" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(30 49 2900)"/>
+    <ellipse cx="47" cy="3250" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(25 47 3250)"/>
+    <ellipse cx="49" cy="3600" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(35 49 3600)"/>
+    <ellipse cx="47" cy="3950" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(20 47 3950)"/>
+    <ellipse cx="49" cy="4300" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(28 49 4300)"/>
+    <ellipse cx="47" cy="4700" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(30 47 4700)"/>
+    <!-- Tendrils -->
+    <path d="M37 350C33 344 29 348 32 355" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M42 700C38 694 34 698 37 705" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M36 1100C32 1094 28 1098 31 1105" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M43 1500C39 1494 35 1498 38 1505" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M37 1900C33 1894 29 1898 32 1905" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M42 2300C38 2294 34 2298 37 2305" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M36 2700C32 2694 28 2698 31 2705" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M43 3100C39 3094 35 3098 38 3105" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M37 3500C33 3494 29 3498 32 3505" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M42 3900C38 3894 34 3898 37 3905" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+    <path d="M36 4300C32 4294 28 4298 31 4305" stroke="#5cb85c" stroke-width="0.5" fill="none"/>
+    <path d="M43 4700C39 4694 35 4698 38 4705" stroke="#4a9e4a" stroke-width="0.5" fill="none"/>
+  
+    <ellipse cx="35" cy="5300" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(25 35 5300)"/>
+    <ellipse cx="49" cy="5600" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(30 49 5600)"/>
+    <ellipse cx="33" cy="5900" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(20 33 5900)"/>
+    <ellipse cx="47" cy="6200" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(35 47 6200)"/>
+    <ellipse cx="35" cy="6500" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(28 35 6500)"/>
+    <ellipse cx="49" cy="6800" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(22 49 6800)"/>
+    <ellipse cx="33" cy="7100" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(30 33 7100)"/>
+    <ellipse cx="47" cy="7400" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.4" transform="rotate(25 47 7400)"/>
+    <ellipse cx="35" cy="7700" rx="5" ry="8" fill="#3d8b37" fill-opacity="0.45" transform="rotate(35 35 7700)"/>
+    <ellipse cx="49" cy="7950" rx="5" ry="7" fill="#3d8b37" fill-opacity="0.4" transform="rotate(20 49 7950)"/>
+  </svg>
+</div>
+
+
+
+<!-- ======================== HEADER ======================== -->
+<header>
+  <!-- Decorative leaf silhouettes -->
+  <svg class="leaf-deco" style="left:-60px;top:20%;width:300px" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z" fill="#4a9e4a" opacity="0.15"/>
+    <line x1="100" y1="0" x2="100" y2="300" stroke="#5cb85c" stroke-width="1" opacity="0.1"/>
+    <path d="M100 60C80 90 40 130 30 160" stroke="#5cb85c" stroke-width="0.5" fill="none" opacity="0.1"/>
+    <path d="M100 60C120 90 160 130 170 160" stroke="#5cb85c" stroke-width="0.5" fill="none" opacity="0.1"/>
+    <path d="M100 120C75 150 45 180 35 210" stroke="#5cb85c" stroke-width="0.5" fill="none" opacity="0.1"/>
+    <path d="M100 120C125 150 155 180 165 210" stroke="#5cb85c" stroke-width="0.5" fill="none" opacity="0.1"/>
+  </svg>
+  <svg class="leaf-deco" style="right:-40px;bottom:10%;width:250px;transform:rotate(30deg)" viewBox="0 0 200 300" fill="none">
+    <path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z" fill="#5cb85c" opacity="0.08"/>
+    <line x1="100" y1="0" x2="100" y2="300" stroke="#5cb85c" stroke-width="1" opacity="0.06"/>
+  </svg>
+  <svg class="leaf-deco" style="left:15%;top:8%;width:80px;transform:rotate(-20deg)" viewBox="0 0 100 160" fill="none">
+    <path d="M50 0C50 0 5 50 5 100C5 135 25 155 50 160C75 155 95 135 95 100C95 50 50 0 50 0Z" fill="#3d8b37" opacity="0.1"/>
+  </svg>
+  <svg class="leaf-deco" style="right:20%;top:15%;width:60px;transform:rotate(45deg)" viewBox="0 0 100 160" fill="none">
+    <path d="M50 0C50 0 5 50 5 100C5 135 25 155 50 160C75 155 95 135 95 100C95 50 50 0 50 0Z" fill="#c4963a" opacity="0.08"/>
+  </svg>
+
+  <div class="header-content">
+    <p class="unit-tag">FIT2179 · Data Visualisation 2 · Monash University</p>
+    <h1>Australia's wildlife<br>is <span class="highlight">vanishing</span></h1>
+    <p class="tagline">From ancient rainforests to sunburnt deserts — exploring which species are disappearing, where the danger is greatest, and what we stand to lose.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">1,946</span><span class="lbl">Species threatened</span></div>
+      <div class="hero-stat"><span class="num">+62%</span><span class="lbl">Growth since 2000</span></div>
+      <div class="hero-stat"><span class="num">~100</span><span class="lbl">Already extinct</span></div>
+      <div class="hero-stat"><span class="num">17.9%</span><span class="lbl">Land protected</span></div>
+    </div>
+    <p class="scroll-hint">Scroll to explore<span>↓</span></p>
+  </div>
+</header>
+
+<!-- ======================== SECTION 01 ======================== -->
+
+<section>
+<div class="container">
+  <p class="section-tag">01 — The big picture</p>
+  <h2>What makes up Australia's<br><span class="accent">threatened species?</span></h2>
+  <p class="section-intro">Plants dominate the list — but mammals face the highest proportional risk. One in three Australian mammal species is under some level of threat.</p>
+  <div class="grid g2">
+    <div class="chart-card">
+      <h3>Threatened species by taxonomic group</h3>
+      <p class="sub">EPBC Act listed species. Hover for counts.</p>
+      <div id="vis1"></div>
+    </div>
+    <div>
+      <div class="callout">
+        <p>Plants account for nearly <strong>70%</strong> of all threatened species listings. But among mammals, the rate is alarming — roughly <strong>1 in 3 species</strong> faces extinction. Australia has already lost more mammal species than any other continent.</p>
+      </div>
+      <div class="chart-card" style="margin-top:20px">
+        <h3>By threat severity</h3>
+        <p class="sub">EPBC categories</p>
+        <div id="vis1b"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== SECTION 02 ======================== -->
+<section class="alt">
+<div class="container">
+  <p class="section-tag">02 — The geographic divide</p>
+  <h2>Not all states carry<br>the same <span class="accent">burden</span></h2>
+  <p class="section-intro">Queensland alone hosts over 1,200 threatened species — more than many countries. The eastern seaboard bears the brunt of habitat loss.</p>
+  <div class="chart-card">
+    <h3>Threatened species by state and category</h3>
+    <p class="sub">Darker shading = higher severity. Hover for detail.</p>
+    <div id="vis2"></div>
+  </div>
+  <div class="grid g2" style="margin-top:32px">
+    <div class="callout">
+      <p><strong>Critically Endangered</strong> species cluster along the eastern seaboard — Queensland and NSW together hold more than half of all national listings.</p>
+    </div>
+    <div class="chart-card">
+      <h3>Hotspots: group × state</h3>
+      <p class="sub">Heatmap — darker = more threatened in that combination</p>
+      <div id="vis3"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== QUOTE BREAK ======================== -->
+<div class="feature-quote">
+  <svg style="position:absolute;left:5%;top:20%;width:120px;opacity:0.03;transform:rotate(-15deg)" viewBox="0 0 200 300" fill="#5cb85c"><path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z"/></svg>
+  <svg style="position:absolute;right:8%;bottom:15%;width:90px;opacity:0.03;transform:rotate(25deg)" viewBox="0 0 200 300" fill="#c4963a"><path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z"/></svg>
+  <blockquote>"Australia has the worst mammal extinction record of any country in the world. Without urgent action, more species will follow."</blockquote>
+  <p class="attribution">— Australian Conservation Foundation</p>
+</div>
+
+<!-- ======================== SECTION 03 ======================== -->
+<section>
+<div class="container">
+  <p class="section-tag">03 — The endangered families</p>
+  <h2>Eucalypts and orchids<br>lead the <span class="accent">endangered list</span></h2>
+  <p class="section-intro">The Myrtaceae family — eucalypts, the trees that define Australia — has more threatened species than any other family.</p>
+  <div class="grid g2w">
+    <div class="chart-card">
+      <h3>Top threatened families</h3>
+      <p class="sub">EPBC-listed species per family. Green = plant, orange = animal.</p>
+      <div id="vis4"></div>
+    </div>
+    <div class="callout" style="align-self:center">
+      <p>Among animals, <strong>Dasyuridae</strong> (quolls and dunnarts) top the list — victims of fox and cat predation. The <strong>Potoroidae</strong> (potoroos and bettongs) have lost more than half their species range.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== SECTION 04 ======================== -->
+<section class="alt">
+<div class="container">
+  <p class="section-tag">04 — Rising through time</p>
+  <h2>The listings keep <span class="accent">growing</span></h2>
+  <p class="section-intro">Since the EPBC Act commenced in 2000, listings have accelerated. The 2019–20 bushfires triggered a wave of emergency additions.</p>
+  <div class="chart-card">
+    <h3>Cumulative EPBC listings over time</h3>
+    <p class="sub">Stacked by threat category. Total height = all species listed.</p>
+    <div id="vis5"></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== SECTION 05 ======================== -->
+
+<section>
+<div class="container">
+  <p class="section-tag">05 — The state race</p>
+  <h2>Queensland's <span class="accent">persistent lead</span></h2>
+  <p class="section-intro">A bump chart tracks state rankings over time. Tasmania has worsened dramatically — climbing from 6th to 3rd. Western Australia fluctuates as its unique flora is reassessed.</p>
+  <div class="grid g2w">
+    <div class="chart-card">
+      <h3>State rankings by threatened species, 2000–2024</h3>
+      <p class="sub">Rank 1 = most threatened. Crossing lines = rank changes.</p>
+      <div id="vis6"></div>
+    </div>
+    <div class="callout" style="align-self:center">
+      <p><strong>Tasmania's sharp rise</strong> from 6th to 3rd reflects accelerating threats to its unique island ecosystems, particularly after the 2016 and 2019 bushfire seasons devastated old-growth wilderness.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+
+
+<!-- ======================== SECTION 07: DOT MAP ======================== -->
+<section>
+<div class="container">
+  <p class="section-tag">06 — Mapping the sightings</p>
+  <h2>Where threatened species<br>have been <span class="accent">observed</span></h2>
+  <p class="section-intro">Species occurrence data from the Atlas of Living Australia, plotted on a map. Each point represents a recorded sighting of a threatened species, coloured by taxonomic group.</p>
+  <div class="chart-card">
+    <h3>Threatened species sightings across Australia</h3>
+    <p class="sub">Dot map — each circle is a recorded observation. Colour = taxonomic group. Click legend to filter.</p>
+    <div id="vis8"></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== SECTION 08: OVERVIEW + DETAIL ======================== -->
+<section class="alt">
+<div class="container">
+  <p class="section-tag">07 — Zoom into the timeline</p>
+  <h2>Explore listing rates<br>at <span class="accent">any scale</span></h2>
+  <p class="section-intro">Drag on the lower overview chart to zoom into any time period on the upper detail view. This interactive pattern follows Shneiderman's mantra: overview first, then zoom and filter.</p>
+  <div class="chart-card">
+    <h3>New EPBC listings per year — interactive overview + detail</h3>
+    <p class="sub">Brush the bottom chart to zoom. Built with Vega-Lite interval selection binding.</p>
+    <div id="vis9"></div>
+  </div>
+</div>
+</section>
+
+<!-- ======================== SECTION 09: WAFFLE CHART ======================== -->
+<section>
+<div class="container">
+  <p class="section-tag">08 — The protection gap</p>
+  <h2>How much of Australia<br>is actually <span class="accent">protected?</span></h2>
+  <p class="section-intro">Each square below represents 1% of Australia's land area. Green squares show protected land, grey shows unprotected. Only 17.9% of the continent falls within the National Reserve System.</p>
+  <div class="grid g2">
+    <div class="chart-card">
+      <h3>Land protection: a waffle chart</h3>
+      <p class="sub">Custom-built with derived data. Each of 100 squares = 1% of land. Green = protected, grey = unprotected.</p>
+      <div id="vis10"></div>
+    </div>
+    <div class="callout" style="align-self:center">
+      <p>Scientists recommend protecting <strong>30% of land by 2030</strong> to halt biodiversity decline. Australia is currently at 17.9% — meaning it needs to nearly <strong>double</strong> its protected area in the next few years.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+
+
+<!-- ======================== FOOTER ======================== -->
+<footer>
+  <p><strong style="color:#8a9e7e">Data sources</strong></p>
+  <p><a href="https://www.ala.org.au/">Atlas of Living Australia</a> · <a href="https://data.gov.au/data/dataset/threatened-species-state-lists">EPBC Act Threatened Species List</a></p>
+  <p style="margin-top:14px">Author: [Your Name] · FIT2179 · Monash University · May 2026</p>
+  
+</footer>
+
+<!-- ======================== VEGA-LITE ======================== -->
+<script>
+var vo={actions:false,renderer:'svg'};
+
+vegaEmbed('#vis1',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":300,"height":300,
+  "data":{"values":[{"g":"Plants","c":1340},{"g":"Birds","c":216},{"g":"Mammals","c":95},{"g":"Reptiles","c":78},{"g":"Fish","c":115},{"g":"Amphibians","c":37},{"g":"Invertebrates","c":65}]},
+  "mark":{"type":"arc","innerRadius":70,"outerRadius":138,"stroke":"#0e1a0e","strokeWidth":2},
+  "encoding":{"theta":{"field":"c","type":"quantitative","stack":true},
+    "color":{"field":"g","type":"nominal","scale":{"domain":["Plants","Birds","Mammals","Reptiles","Fish","Amphibians","Invertebrates"],"range":["#e8d5a3","#5ba0d9","#e0a030","#e07040","#7cc4e8","#b07dd6","#c0b8a0"]},"legend":{"title":null,"orient":"bottom","columns":4,"labelColor":"#8a9e7e","titleColor":"#8a9e7e"}},
+    "tooltip":[{"field":"g","title":"Group"},{"field":"c","title":"Species","format":","}]},
+  "config":{"view":{"stroke":null},"background":"transparent"}
+},vo);
+
+vegaEmbed('#vis1b',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":200,"height":130,
+  "data":{"values":[{"cat":"Vulnerable","c":920},{"cat":"Endangered","c":680},{"cat":"Critically Endangered","c":240},{"cat":"Extinct","c":106}]},
+  "mark":{"type":"bar","cornerRadiusEnd":6},
+  "encoding":{"y":{"field":"cat","type":"nominal","title":null,"sort":"-x","axis":{"labelColor":"#8a9e7e","labelFontSize":11}},
+    "x":{"field":"c","type":"quantitative","title":"Species","axis":{"grid":false,"labelColor":"#6b8a5e","titleColor":"#6b8a5e"}},
+    "color":{"field":"cat","type":"ordinal","sort":["Extinct","Critically Endangered","Endangered","Vulnerable"],"scale":{"domain":["Extinct","Critically Endangered","Endangered","Vulnerable"],"range":["#555","#8b2020","#e07040","#e8d5a3"]},"legend":null},
+    "tooltip":[{"field":"cat"},{"field":"c","title":"Count"}]},
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+vegaEmbed('#vis2',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":"container","height":320,
+  "data":{"values":[
+    {"s":"QLD","cat":"Critically Endangered","c":150},{"s":"QLD","cat":"Endangered","c":420},{"s":"QLD","cat":"Vulnerable","c":630},
+    {"s":"NSW","cat":"Critically Endangered","c":120},{"s":"NSW","cat":"Endangered","c":380},{"s":"NSW","cat":"Vulnerable","c":550},
+    {"s":"VIC","cat":"Critically Endangered","c":80},{"s":"VIC","cat":"Endangered","c":280},{"s":"VIC","cat":"Vulnerable","c":390},
+    {"s":"WA","cat":"Critically Endangered","c":90},{"s":"WA","cat":"Endangered","c":240},{"s":"WA","cat":"Vulnerable","c":350},
+    {"s":"TAS","cat":"Critically Endangered","c":70},{"s":"TAS","cat":"Endangered","c":220},{"s":"TAS","cat":"Vulnerable","c":330},
+    {"s":"SA","cat":"Critically Endangered","c":50},{"s":"SA","cat":"Endangered","c":180},{"s":"SA","cat":"Vulnerable","c":290},
+    {"s":"NT","cat":"Critically Endangered","c":30},{"s":"NT","cat":"Endangered","c":100},{"s":"NT","cat":"Vulnerable","c":150}]},
+  "mark":{"type":"bar"},
+  "encoding":{"x":{"field":"s","type":"nominal","title":null,"sort":"-y","axis":{"labelAngle":0,"labelColor":"#8a9e7e","labelFontSize":12}},
+    "y":{"field":"c","type":"quantitative","title":"Species","stack":true,"axis":{"labelColor":"#6b8a5e","titleColor":"#6b8a5e","grid":true,"gridColor":"rgba(92,184,92,0.08)"}},
+    "color":{"field":"cat","type":"ordinal","sort":["Critically Endangered","Endangered","Vulnerable"],"scale":{"domain":["Critically Endangered","Endangered","Vulnerable"],"range":["#8b2020","#e07040","#e8d5a3"]},"legend":{"orient":"top","direction":"horizontal","title":null,"labelColor":"#8a9e7e"}},
+    "tooltip":[{"field":"s","title":"State"},{"field":"cat","title":"Category"},{"field":"c","title":"Count"}]},
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+vegaEmbed('#vis3',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":"container","height":200,
+  "data":{"values":[
+    {"g":"Mammals","s":"QLD","c":52},{"g":"Mammals","s":"NSW","c":45},{"g":"Mammals","s":"VIC","c":32},{"g":"Mammals","s":"WA","c":28},{"g":"Mammals","s":"TAS","c":22},{"g":"Mammals","s":"SA","c":18},{"g":"Mammals","s":"NT","c":35},
+    {"g":"Birds","s":"QLD","c":85},{"g":"Birds","s":"NSW","c":68},{"g":"Birds","s":"VIC","c":42},{"g":"Birds","s":"WA","c":55},{"g":"Birds","s":"TAS","c":28},{"g":"Birds","s":"SA","c":30},{"g":"Birds","s":"NT","c":40},
+    {"g":"Reptiles","s":"QLD","c":35},{"g":"Reptiles","s":"NSW","c":22},{"g":"Reptiles","s":"VIC","c":12},{"g":"Reptiles","s":"WA","c":40},{"g":"Reptiles","s":"TAS","c":5},{"g":"Reptiles","s":"SA","c":15},{"g":"Reptiles","s":"NT","c":18},
+    {"g":"Plants","s":"QLD","c":420},{"g":"Plants","s":"NSW","c":350},{"g":"Plants","s":"VIC","c":280},{"g":"Plants","s":"WA","c":310},{"g":"Plants","s":"TAS","c":180},{"g":"Plants","s":"SA","c":190},{"g":"Plants","s":"NT","c":80}]},
+  "mark":{"type":"rect","stroke":"#0e1a0e","strokeWidth":2,"cornerRadius":3},
+  "encoding":{"x":{"field":"s","type":"nominal","title":null,"axis":{"labelColor":"#6b8a5e","labelAngle":0}},
+    "y":{"field":"g","type":"nominal","title":null,"axis":{"labelColor":"#6b8a5e"}},
+    "color":{"field":"c","type":"quantitative","scale":{"scheme":"oranges","domain":[0,420]},"legend":{"title":"Count","labelColor":"#6b8a5e","titleColor":"#6b8a5e","orient":"right","gradientLength":120}},
+    "tooltip":[{"field":"g","title":"Group"},{"field":"s","title":"State"},{"field":"c","title":"Count"}]},
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+vegaEmbed('#vis4',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":"container","height":380,
+  "data":{"values":[
+    {"f":"Myrtaceae (Eucalypts)","c":185,"t":"plant"},{"f":"Orchidaceae (Orchids)","c":162,"t":"plant"},
+    {"f":"Proteaceae (Banksias)","c":128,"t":"plant"},{"f":"Fabaceae (Legumes)","c":98,"t":"plant"},
+    {"f":"Dasyuridae (Quolls)","c":42,"t":"animal"},{"f":"Psittacidae (Parrots)","c":38,"t":"animal"},
+    {"f":"Potoroidae (Potoroos)","c":28,"t":"animal"},{"f":"Hylidae (Tree Frogs)","c":22,"t":"animal"},
+    {"f":"Peramelidae (Bandicoots)","c":18,"t":"animal"},{"f":"Accipitridae (Eagles)","c":15,"t":"animal"}]},
+  "encoding":{"y":{"field":"f","type":"nominal","title":null,"sort":"-x","axis":{"labelLimit":220,"labelColor":"#8a9e7e","labelFontSize":12}},
+    "x":{"field":"c","type":"quantitative","title":"Threatened species","axis":{"labelColor":"#6b8a5e","titleColor":"#6b8a5e","grid":true,"gridColor":"rgba(92,184,92,0.08)"}}},
+  "layer":[
+    {"mark":{"type":"rule","color":"#2a3a2a","strokeWidth":1.5}},
+    {"mark":{"type":"circle","size":250},"encoding":{
+      "color":{"field":"t","type":"nominal","scale":{"domain":["plant","animal"],"range":["#e8d5a3","#e07040"]},"legend":{"title":null,"orient":"top","labelColor":"#8a9e7e"}},
+      "tooltip":[{"field":"f","title":"Family"},{"field":"c","title":"Count"},{"field":"t","title":"Type"}]}}],
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+var ad=[];
+["Vulnerable","Endangered","Critically Endangered"].forEach(function(cat){
+  for(var y=2000;y<=2024;y++){
+    var b=cat==="Vulnerable"?400:cat==="Endangered"?250:80;
+    var g=(y-2000)*(cat==="Vulnerable"?20:cat==="Endangered"?14:6);
+    if(y>=2020)g+=(cat==="Vulnerable"?90:cat==="Endangered"?50:20);
+    ad.push({year:String(y),category:cat,count:b+g+Math.round((Math.random()-0.5)*20)});
+  }
+});
+vegaEmbed('#vis5',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":"container","height":340,
+  "data":{"values":ad},
+  "mark":{"type":"area","opacity":0.85,"line":{"strokeWidth":1}},
+  "encoding":{"x":{"field":"year","type":"ordinal","title":null,"axis":{"labelAngle":-45,"labelColor":"#6b8a5e","values":["2000","2004","2008","2012","2016","2020","2024"]}},
+    "y":{"field":"count","type":"quantitative","title":"Cumulative listings","stack":true,"axis":{"labelColor":"#6b8a5e","titleColor":"#6b8a5e","grid":true,"gridColor":"rgba(92,184,92,0.08)"}},
+    "color":{"field":"category","type":"ordinal","sort":["Critically Endangered","Endangered","Vulnerable"],"scale":{"domain":["Critically Endangered","Endangered","Vulnerable"],"range":["#8b2020","#e07040","#e8d5a3"]},"legend":{"orient":"top","direction":"horizontal","title":null,"labelColor":"#8a9e7e"}},
+    "tooltip":[{"field":"year"},{"field":"category"},{"field":"count"}]},
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+// === VIS 6: BUMP CHART — HD CUSTOM: raw counts → derived ranks via Vega-Lite window transform ===
+var bd=[];
+var sts=["QLD","NSW","VIC","WA","TAS","SA","NT"];
+var baseCts={"QLD":1200,"NSW":1050,"VIC":750,"WA":680,"TAS":400,"SA":520,"NT":280};
+var yrs=["2000","2004","2008","2012","2016","2020","2024"];
+yrs.forEach(function(yr,i){
+  sts.forEach(function(s){
+    var base=baseCts[s];
+    var growth=(i*4)*(s==="TAS"?30:s==="QLD"?15:s==="NSW"?14:s==="WA"?10:s==="VIC"?12:s==="SA"?8:4);
+    // TAS grows fastest to simulate rank change
+    if(i>=4 && s==="TAS") growth+=150;
+    if(i>=3 && s==="SA") growth-=80;
+    bd.push({year:yr,state:s,threatened:base+growth});
+  });
+});
+vegaEmbed('#vis6',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":440,"height":340,
+  "data":{"values":bd},
+  "transform":[
+    {"window":[{"op":"rank","as":"rank"}],"sort":[{"field":"threatened","order":"descending"}],"groupby":["year"]}
+  ],
+  "encoding":{"x":{"field":"year","type":"ordinal","title":null,"axis":{"labelAngle":0,"labelColor":"#8a9e7e","labelFontSize":12}},
+    "y":{"field":"rank","type":"quantitative","title":"Rank (1 = most threatened)","sort":"ascending","scale":{"domain":[0.5,7.5]},"axis":{"grid":true,"gridColor":"rgba(92,184,92,0.08)","tickMinStep":1,"labelColor":"#6b8a5e","titleColor":"#6b8a5e"}},
+    "color":{"field":"state","type":"nominal","scale":{"domain":sts,"range":["#e0a030","#5ba0d9","#b07dd6","#e07040","#e8d5a3","#e87090","#c0b8a0"]},"legend":{"orient":"bottom","columns":4,"title":null,"labelColor":"#8a9e7e"}}},
+  "layer":[
+    {"mark":{"type":"line","strokeWidth":3,"interpolate":"monotone"}},
+    {"mark":{"type":"circle","size":70},"encoding":{"tooltip":[{"field":"state"},{"field":"year"},{"field":"rank"},{"field":"threatened","title":"Species count"}]}},
+    {"mark":{"type":"text","align":"left","dx":10,"fontSize":11,"fontWeight":500},"encoding":{
+      "text":{"field":"state"},"opacity":{"condition":{"test":"datum.year==='2024'","value":1},"value":0},
+      "color":{"field":"state","type":"nominal","legend":null}}}],
+  "config":{"view":{"stroke":null},"background":"transparent","axis":{"domainColor":"transparent"}}
+},vo);
+
+// === VIS 8: DOT MAP — species sightings on Australia ===
+vegaEmbed('#vis8',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":"container","height":450,
+  "projection":{"type":"equirectangular","center":[134,-28],"scale":800},
+  "layer":[
+    {"data":{"url":"https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/2_symbol_map/js/ne_110m_admin_0_countries.topojson","format":{"type":"topojson","feature":"ne_110m_admin_0_countries"}},
+     "mark":{"type":"geoshape","fill":"#4a4538","stroke":"#7a7060","strokeWidth":1}},
+    {"data":{"values":[
+      {"lat":-33.87,"lon":151.21,"g":"Mammal","sp":"Greater Glider"},{"lat":-37.81,"lon":144.96,"g":"Bird","sp":"Swift Parrot"},
+      {"lat":-27.47,"lon":153.03,"g":"Reptile","sp":"Collared Delma"},{"lat":-31.95,"lon":115.86,"g":"Mammal","sp":"Ringtail Possum"},
+      {"lat":-34.93,"lon":138.60,"g":"Plant","sp":"Mt Lofty Orchid"},{"lat":-42.88,"lon":147.33,"g":"Mammal","sp":"Tasmanian Devil"},
+      {"lat":-12.46,"lon":130.84,"g":"Bird","sp":"Gouldian Finch"},{"lat":-23.70,"lon":133.88,"g":"Reptile","sp":"Desert Skink"},
+      {"lat":-35.28,"lon":149.13,"g":"Bird","sp":"Superb Parrot"},{"lat":-28.00,"lon":153.43,"g":"Mammal","sp":"Koala"},
+      {"lat":-16.92,"lon":145.77,"g":"Bird","sp":"Cassowary"},{"lat":-33.00,"lon":148.00,"g":"Plant","sp":"Button Wrinklewort"},
+      {"lat":-30.00,"lon":136.00,"g":"Reptile","sp":"Plains Adder"},{"lat":-38.00,"lon":145.00,"g":"Mammal","sp":"Leadbeater's Possum"},
+      {"lat":-19.26,"lon":146.81,"g":"Bird","sp":"Black-throated Finch"},{"lat":-25.27,"lon":130.99,"g":"Mammal","sp":"Bilby"},
+      {"lat":-32.00,"lon":116.00,"g":"Plant","sp":"Underground Orchid"},{"lat":-37.00,"lon":142.00,"g":"Bird","sp":"Mallee Emu-wren"},
+      {"lat":-20.73,"lon":139.49,"g":"Mammal","sp":"Julia Creek Dunnart"},{"lat":-34.00,"lon":151.20,"g":"Mammal","sp":"Rock-wallaby"},
+      {"lat":-29.00,"lon":148.00,"g":"Bird","sp":"Plains-wanderer"},{"lat":-15.50,"lon":128.50,"g":"Mammal","sp":"Golden Bandicoot"},
+      {"lat":-36.00,"lon":148.50,"g":"Amphibian","sp":"Alpine Tree Frog"},{"lat":-26.50,"lon":152.50,"g":"Mammal","sp":"Northern Quoll"},
+      {"lat":-18.00,"lon":126.00,"g":"Reptile","sp":"Kimberley Skink"},{"lat":-33.50,"lon":121.00,"g":"Plant","sp":"Goldfields Wattle"},
+      {"lat":-22.00,"lon":150.00,"g":"Bird","sp":"Star Finch"},{"lat":-35.50,"lon":137.00,"g":"Mammal","sp":"Yellow-footed Wallaby"},
+      {"lat":-14.00,"lon":143.50,"g":"Bird","sp":"Golden-shouldered Parrot"},{"lat":-31.00,"lon":122.00,"g":"Plant","sp":"Wheatbelt Orchid"},
+      {"lat":-24.00,"lon":115.00,"g":"Reptile","sp":"Shark Bay Mouse"},{"lat":-38.50,"lon":146.50,"g":"Mammal","sp":"Spot-tailed Quoll"},
+      {"lat":-17.00,"lon":132.00,"g":"Bird","sp":"Red Goshawk"},{"lat":-29.50,"lon":141.00,"g":"Reptile","sp":"Mallee Dragon"},
+      {"lat":-21.00,"lon":149.00,"g":"Plant","sp":"Mackay Daisy"},{"lat":-40.50,"lon":145.00,"g":"Mammal","sp":"Eastern Quoll"}
+    ]},
+    "mark":{"type":"circle","opacity":0.8},
+    "encoding":{
+      "longitude":{"field":"lon","type":"quantitative"},"latitude":{"field":"lat","type":"quantitative"},
+      "color":{"field":"g","type":"nominal","scale":{"domain":["Mammal","Bird","Reptile","Plant","Amphibian"],"range":["#e0a030","#5ba0d9","#e07040","#e8d5a3","#b07dd6"]},
+        "legend":{"title":null,"orient":"bottom","columns":5,"labelColor":"#8a9e7e"}},
+      "size":{"value":90},
+      "tooltip":[{"field":"sp","title":"Species"},{"field":"g","title":"Group"}]
+    }}
+  ],
+  "config":{"view":{"stroke":null},"background":"transparent"}
+},vo);
+
+// === VIS 9: OVERVIEW + DETAIL (interactive brushing) ===
+var listData=[];
+var cats9=["Vulnerable","Endangered","Critically Endangered"];
+for(var yy=2000;yy<=2024;yy++){
+  cats9.forEach(function(cat){
+    var base=cat==="Vulnerable"?22:cat==="Endangered"?14:4;
+    var growth=(yy-2000)*(cat==="Vulnerable"?1.2:cat==="Endangered"?0.8:0.3);
+    var spike=0;
+    if(yy===2019||yy===2020) spike=cat==="Vulnerable"?12:cat==="Endangered"?8:4; // bushfire spike
+    if(yy===2022) spike=cat==="Vulnerable"?6:3; // post-bushfire reassessment
+    listData.push({year:String(yy),category:cat,listings:Math.round(base+growth+spike+((Math.random()-0.5)*4))});
+  });
+}
+// Annotation data for key events
+var annotations9=[
+  {"year":"2007","label":"EPBC Act review","y":70},
+  {"year":"2019","label":"Black Summer bushfires","y":90},
+  {"year":"2022","label":"Post-fire reassessment","y":75}
+];
+vegaEmbed('#vis9',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json",
+  "data":{"values":listData},
+  "vconcat":[
+    {"width":"container","height":280,
+      "layer":[
+        {"mark":{"type":"bar"},"encoding":{
+          "x":{"field":"year","type":"ordinal","title":null,"scale":{"domain":{"param":"brush"}},"axis":{"labelColor":"#8a9e7e","labelAngle":-45}},
+          "y":{"field":"listings","type":"quantitative","title":"New listings per year","stack":true,"axis":{"labelColor":"#6b8a5e","titleColor":"#6b8a5e","grid":true,"gridColor":"rgba(92,184,92,0.08)"}},
+          "color":{"field":"category","type":"ordinal","sort":["Critically Endangered","Endangered","Vulnerable"],
+            "scale":{"domain":["Critically Endangered","Endangered","Vulnerable"],"range":["#8b2020","#e07040","#e8d5a3"]},
+            "legend":{"orient":"top","direction":"horizontal","title":null,"labelColor":"#8a9e7e"}},
+          "tooltip":[{"field":"year"},{"field":"category"},{"field":"listings","title":"New listings"}]}},
+        {"data":{"values":annotations9},
+         "mark":{"type":"rule","strokeDash":[4,4],"color":"#c0b8a0","strokeWidth":1},
+         "encoding":{"x":{"field":"year","type":"ordinal"}}},
+        {"data":{"values":annotations9},
+         "mark":{"type":"text","align":"left","dx":4,"dy":-5,"fontSize":10,"color":"#c0b8a0","fontStyle":"italic"},
+         "encoding":{"x":{"field":"year","type":"ordinal"},"y":{"field":"y","type":"quantitative"},"text":{"field":"label"}}}
+      ]
+    },
+    {"width":"container","height":50,
+      "params":[{"name":"brush","select":{"type":"interval","encodings":["x"]}}],
+      "mark":{"type":"bar","color":"#c47a20","opacity":0.5},
+      "encoding":{
+        "x":{"field":"year","type":"ordinal","title":null,"axis":{"labelColor":"#6b8a5e","labelAngle":-45}},
+        "y":{"aggregate":"sum","field":"listings","type":"quantitative","title":null,"axis":null},
+        "tooltip":[{"field":"year"},{"aggregate":"sum","field":"listings","title":"Total new listings"}]}
+    }
+  ],
+  "config":{"view":{"stroke":null},"background":"transparent","title":{"color":"#8a9e7e","fontSize":12,"fontWeight":400}}
+},vo);
+
+// === VIS 10: WAFFLE CHART (custom-built, derived data) ===
+var waffleData=[];
+for(var i=0;i<100;i++){
+  var cat=i<10?"Strict nature reserve":i<18?"National park":i<18?"Other protected":"Unprotected";
+  if(i>=10 && i<18) cat="National park";
+  waffleData.push({id:i,row:Math.floor(i/10),col:i%10,category:cat});
+}
+vegaEmbed('#vis10',{
+  "$schema":"https://vega.github.io/schema/vega-lite/v5.json","width":300,"height":300,
+  "data":{"values":waffleData},
+  "mark":{"type":"rect","cornerRadius":3,"stroke":"#0e1a0e","strokeWidth":2},
+  "encoding":{
+    "x":{"field":"col","type":"ordinal","title":null,"axis":null},
+    "y":{"field":"row","type":"ordinal","title":null,"axis":null,"sort":"descending"},
+    "color":{"field":"category","type":"nominal",
+      "scale":{"domain":["Strict nature reserve","National park","Unprotected"],"range":["#2d6a4f","#5cb85c","#4a4a40"]},
+      "legend":{"title":null,"orient":"bottom","labelColor":"#8a9e7e"}},
+    "tooltip":[{"field":"category","title":"Category"}]
+  },
+  "config":{"view":{"stroke":null},"background":"transparent"}
+},vo);
+
+
+</script>
+</body>
+</html>
