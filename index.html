@@ -38,60 +38,59 @@ header .unit-tag{font-size:0.68em;letter-spacing:4px;text-transform:uppercase;co
 .scroll-hint span{display:block;margin-top:8px;font-size:1.8em;animation:bounce 2s ease infinite}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-/* Container */
+
 .container{max-width:1100px;margin:0 auto;padding:0 48px}
 
-/* Sections */
+
 section{padding:100px 0;position:relative;overflow:hidden}
 section.alt{background:rgba(18,30,18,0.5)}
 
-/* Decorative leaf dividers between sections */
 .leaf-divider{text-align:center;padding:20px 0;color:rgba(92,184,92,0.2);font-size:1.4em;letter-spacing:12px}
 
-/* Section headers */
+
 .section-tag{font-size:0.7em;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#5cb85c;margin-bottom:10px;display:flex;align-items:center;gap:10px}
 .section-tag::before{content:'';width:30px;height:1px;background:#5cb85c}
 h2{font-family:'Cormorant Garamond',serif;font-size:2.6em;font-weight:700;color:#e8e4d8;line-height:1.15;margin-bottom:14px}
 h2 .accent{color:#c4963a;font-style:italic}
 .section-intro{color:#8a9e7e;font-size:0.95em;font-weight:300;margin-bottom:40px;max-width:580px;line-height:1.75}
 
-/* Grid */
+
 .grid{display:grid;gap:32px;align-items:start}
 .g2{grid-template-columns:1fr 1fr}
 .g2w{grid-template-columns:1.5fr 1fr}
 .g2n{grid-template-columns:1fr 1.5fr}
 @media(max-width:800px){.g2,.g2w,.g2n{grid-template-columns:1fr}}
 
-/* Chart cards — organic feel with subtle green glow */
+
 .chart-card{background:rgba(20,32,20,0.4);border:none;border-radius:20px;padding:28px;position:relative;backdrop-filter:blur(4px)}
 .chart-card::before{content:'';position:absolute;top:0;left:40px;right:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(92,184,92,0.2),transparent)}
 .chart-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2em;font-weight:600;color:#d6d2c4;margin-bottom:4px}
 .chart-card .sub{font-size:0.78em;color:#6b8a5e;margin-bottom:16px;font-weight:300}
 
-/* Callout — warm amber leaf-inspired */
+
 .callout{position:relative;background:rgba(196,150,58,0.04);border-left:2px solid rgba(196,150,58,0.4);padding:22px 26px;border-radius:0 16px 16px 0;margin-bottom:20px}
 .callout p{font-size:0.9em;color:#c4b88a;line-height:1.7}
 .callout strong{color:#c4963a;font-weight:500}
 
-/* Feature quote */
+
 .feature-quote{text-align:center;padding:80px 48px;position:relative}
 .feature-quote blockquote{font-family:'Cormorant Garamond',serif;font-size:1.8em;font-style:italic;color:#5cb85c;max-width:700px;margin:0 auto;line-height:1.4;opacity:0.7}
 .feature-quote .attribution{font-size:0.75em;color:#4a6e4a;margin-top:16px;letter-spacing:1px}
 
-/* Organic section break */
+
 .organic-break{height:120px;position:relative;overflow:hidden}
 .organic-break svg{width:100%;height:100%;display:block}
 
-/* Footer */
+
 footer{text-align:center;padding:60px 48px;border:none;color:#4a6e4a;font-size:0.78em}
 footer a{color:#5cb85c;text-decoration:none}
 footer a:hover{text-decoration:underline}
 
-/* Vega embed */
+
 .vega-embed{width:100%}
 .vega-embed details{display:none!important}
 
-/* Hanging vines */
+
 .vine-left,.vine-right{position:absolute;top:0;width:60px;pointer-events:none;z-index:10;opacity:0.3;height:100%}
 .vine-left{left:0}
 .vine-right{right:0}
@@ -101,7 +100,7 @@ footer a:hover{text-decoration:underline}
 </head>
 <body>
 
-<!-- Hanging vines — two stems per side, full page length -->
+
 <div class="vine-left">
   <svg viewBox="0 0 60 8000" fill="none">
     <!-- Stem 1 -->
@@ -238,7 +237,6 @@ footer a:hover{text-decoration:underline}
 
 
 
-<!-- ======================== HEADER ======================== -->
 <header>
   <!-- Decorative leaf silhouettes -->
   <svg class="leaf-deco" style="left:-60px;top:20%;width:300px" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -274,13 +272,13 @@ footer a:hover{text-decoration:underline}
   </div>
 </header>
 
-<!-- ======================== SECTION 01 ======================== -->
+
 
 <section>
 <div class="container">
   <p class="section-tag">01 — The big picture</p>
   <h2>What makes up Australia's<br><span class="accent">threatened species?</span></h2>
-  <p class="section-intro">Species are listed as threatened under the <strong style="color:#e8d5a3">EPBC Act</strong> (Environment Protection and Biodiversity Conservation Act 1999) — Australia's primary national environmental law. Plants dominate the list, but mammals face the highest proportional risk.</p>
+  <p class="section-intro">Species are listed as threatened under the <strong style="color:#e8d5a3">EPBC Act</strong> (Environment Protection and Biodiversity Conservation Act 1999) Australia's primary national environmental law. Plants dominate the list, but mammals face the highest proportional risk.</p>
   <div class="grid g2">
     <div class="chart-card">
       <h3>Threatened species by taxonomic group</h3>
@@ -289,7 +287,7 @@ footer a:hover{text-decoration:underline}
     </div>
     <div>
       <div class="callout">
-        <p>Plants account for nearly <strong>70%</strong> of all threatened species listings. But among mammals, the rate is alarming — roughly <strong>1 in 3 species</strong> faces extinction. Australia has already lost more mammal species than any other continent.</p>
+        <p>Plants account for nearly <strong>70%</strong> of all threatened species listings. But among mammals, the rate is alarming roughly <strong>1 in 3 species</strong> faces extinction. Australia has already lost more mammal species than any other continent.</p>
       </div>
       <div class="chart-card" style="margin-top:20px">
         <h3>By threat severity</h3>
@@ -301,7 +299,7 @@ footer a:hover{text-decoration:underline}
 </div>
 </section>
 
-<!-- ======================== SECTION 02 ======================== -->
+
 <section class="alt">
 <div class="container">
   <p class="section-tag">02 — The geographic divide</p>
@@ -314,7 +312,7 @@ footer a:hover{text-decoration:underline}
   </div>
   <div class="grid g2" style="margin-top:32px">
     <div class="callout">
-      <p><strong>Critically Endangered</strong> species cluster along the eastern seaboard — Queensland and NSW together hold more than half of all national listings.</p>
+      <p><strong>Critically Endangered</strong> species cluster along the eastern seaboard Queensland and NSW together hold more than half of all national listings.</p>
     </div>
     <div class="chart-card">
       <h3>Hotspots: group × state</h3>
@@ -325,7 +323,7 @@ footer a:hover{text-decoration:underline}
 </div>
 </section>
 
-<!-- ======================== QUOTE BREAK ======================== -->
+
 <div class="feature-quote">
   <svg style="position:absolute;left:5%;top:20%;width:120px;opacity:0.03;transform:rotate(-15deg)" viewBox="0 0 200 300" fill="#5cb85c"><path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z"/></svg>
   <svg style="position:absolute;right:8%;bottom:15%;width:90px;opacity:0.03;transform:rotate(25deg)" viewBox="0 0 200 300" fill="#c4963a"><path d="M100 0C100 0 20 80 20 180C20 240 55 280 100 300C145 280 180 240 180 180C180 80 100 0 100 0Z"/></svg>
@@ -333,7 +331,7 @@ footer a:hover{text-decoration:underline}
   <p class="attribution">— Australian Conservation Foundation</p>
 </div>
 
-<!-- ======================== SECTION 03 ======================== -->
+
 <section>
 <div class="container">
   <p class="section-tag">03 — The endangered families</p>
@@ -352,7 +350,7 @@ footer a:hover{text-decoration:underline}
 </div>
 </section>
 
-<!-- ======================== SECTION 04 ======================== -->
+
 <section class="alt">
 <div class="container">
   <p class="section-tag">04 — Rising through time</p>
@@ -366,7 +364,7 @@ footer a:hover{text-decoration:underline}
 </div>
 </section>
 
-<!-- ======================== SECTION 05 ======================== -->
+
 
 <section>
 <div class="container">
@@ -388,7 +386,7 @@ footer a:hover{text-decoration:underline}
 
 
 
-<!-- ======================== SECTION 07: DOT MAP ======================== -->
+
 <section>
 <div class="container">
   <p class="section-tag">06 — Mapping the sightings</p>
@@ -396,18 +394,18 @@ footer a:hover{text-decoration:underline}
   <p class="section-intro">Species occurrence data from the Atlas of Living Australia, plotted on a map. Each point represents a recorded sighting of a threatened species, coloured by taxonomic group.</p>
   <div class="chart-card">
     <h3>Threatened species sightings across Australia</h3>
-    <p class="sub">Dot map — each circle is a recorded observation. Colour = taxonomic group. Click legend to filter.</p>
+    <p class="sub">In the Dot map each circle is a recorded observation. Colour = taxonomic group.</p>
     <div id="vis8"></div>
   </div>
 </div>
 </section>
 
-<!-- ======================== SECTION 08: OVERVIEW + DETAIL ======================== -->
+
 <section class="alt">
 <div class="container">
   <p class="section-tag">07 — Zoom into the timeline</p>
   <h2>Explore listing rates<br>at <span class="accent">any scale</span></h2>
-  <p class="section-intro">Drag on the lower overview chart to zoom into any time period on the upper detail view. This interactive pattern follows Shneiderman's mantra: overview first, then zoom and filter.</p>
+  <p class="section-intro">Drag on the lower overview chart to zoom into any time period on the upper detail view. </p>
   <div class="chart-card">
     <h3>New EPBC listings per year </h3>
     
@@ -416,7 +414,6 @@ footer a:hover{text-decoration:underline}
 </div>
 </section>
 
-<!-- ======================== SECTION 09: WAFFLE CHART ======================== -->
 <section>
 <div class="container">
   <p class="section-tag">08 — The protection gap</p>
@@ -429,7 +426,7 @@ footer a:hover{text-decoration:underline}
       <div id="vis10"></div>
     </div>
     <div class="callout" style="align-self:center">
-      <p>Scientists recommend protecting <strong>30% of land by 2030</strong> to halt biodiversity decline. Australia is currently at 17.9% — meaning it needs to nearly <strong>double</strong> its protected area in the next few years.</p>
+      <p>Scientists recommend protecting <strong>30% of land by 2030</strong> to halt biodiversity decline. Australia is currently at 17.9%, which means it needs to nearly <strong>double</strong> its protected area in the next few years.</p>
     </div>
   </div>
 </div>
@@ -437,7 +434,6 @@ footer a:hover{text-decoration:underline}
 
 
 
-<!-- ======================== FOOTER ======================== -->
 <footer>
   <p><strong style="color:#8a9e7e">Data sources</strong></p>
   <p><a href="https://www.ala.org.au/">Atlas of Living Australia</a> · <a href="https://data.gov.au/data/dataset/threatened-species-state-lists">EPBC Act Threatened Species List</a></p>
@@ -445,7 +441,7 @@ footer a:hover{text-decoration:underline}
   
 </footer>
 
-<!-- ======================== VEGA-LITE ======================== -->
+
 <script>
 var vo={actions:false,renderer:'svg'};
 
